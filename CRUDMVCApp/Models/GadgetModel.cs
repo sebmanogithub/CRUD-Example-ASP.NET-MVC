@@ -1,11 +1,19 @@
-﻿namespace CRUDMVCApp.Models
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace CRUDMVCApp.Models
 {
     public class GadgetModel
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Description { get; set; }
+        [Required]
+        [DisplayName ("Appears in this movie")]
         public string AppearsIn { get; set; }
+        [Required]
         public string WithThisActor { get; set; }
 
         public GadgetModel()
