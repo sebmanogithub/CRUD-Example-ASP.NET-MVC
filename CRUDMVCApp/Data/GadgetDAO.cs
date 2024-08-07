@@ -6,7 +6,8 @@ namespace CRUDMVCApp.Data
 {
     internal class GadgetDAO
     {
-        string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BondGadgetDataBase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=GadgetBase;
+Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         //Perform all operation on the database ...
         public List<GadgetModel> FetchAll()
         {
@@ -68,12 +69,22 @@ namespace CRUDMVCApp.Data
             return item;
         }
 
-        public int Create(GadgetModel gadgetModel)
+        public int CreateOrUpdate(GadgetModel gadgetModel)
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                string queryText = "INSERT INTO Gadgets (Name, Description, AppearsIn, WithThisActor) " +
+                string queryText = string.Empty;
+
+                if (gadgetModel.Id < 0)
+                {
+                    queryText = "INSERT INTO Gadgets (Name, Description, AppearsIn, WithThisActor) " +
                                    "VALUES (@Name, @Description, @AppearsIn, @WithThisActor); ";
+                }
+                else
+                {
+                    queryText = "UPDATE Gadgets SET Name = @Name, Description = @Description, @AppearsIn = AppearsIn," +
+                        " WHERE WithThisActor = @WithThisActor WHERE Id = @Id";
+                } 
 
                 SqlCommand sqlCmd = new SqlCommand(queryText, sqlConnection);
 
@@ -81,6 +92,7 @@ namespace CRUDMVCApp.Data
                 sqlCmd.Parameters.AddWithValue("@Description", gadgetModel.Description);
                 sqlCmd.Parameters.AddWithValue("@AppearsIn", gadgetModel.AppearsIn);
                 sqlCmd.Parameters.AddWithValue("@WithThisActor", gadgetModel.WithThisActor);
+                sqlCmd.Parameters.AddWithValue("@Id", gadgetModel.Id);
 
                 sqlConnection.Open();
                 int newID = sqlCmd.ExecuteNonQuery();

@@ -30,10 +30,18 @@ namespace CRUDMVCApp.Controllers
             return View("Create");
         }
 
+        public ActionResult Edit(int id)
+        {
+            GadgetDAO gadgetDAO = new GadgetDAO();
+            GadgetModel gadget = gadgetDAO.FetchOne(id);
+
+            return View("Create", gadget);
+        }
+
         public ActionResult ProcessCreate(GadgetModel gadget)
         {
             GadgetDAO gadgetDAO = new GadgetDAO();
-            gadgetDAO.Create(gadget);
+            gadgetDAO.CreateOrUpdate(gadget);
 
             return View("Details", gadget);
         }
